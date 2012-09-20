@@ -1,0 +1,3 @@
+Remote-Pagination plugin provides tags for pagination and to sort columns without page refresh, using ajax and loads only the list of objects needed.
+It supports multiple paginations on the same page as well i.e more than one remotePaginate tag can be used on a same page. 
+

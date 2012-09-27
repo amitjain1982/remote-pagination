@@ -25,8 +25,8 @@ class RemotePaginationTagLib {
         def locale = RCU.getLocale(request)
 
         Integer total = attrs.total.toInteger()
-        Integer offset = params.offset?.toInteger()
-        Integer max = params.max?.toInteger()
+        Integer offset = params.int('offset')
+        Integer max = params.int('max')
         Integer maxsteps = params.maxsteps?.toInteger()
         def pageSizes = attrs.pageSizes ?: []
         Boolean alwaysShowPageSizes = new Boolean(attrs.alwaysShowPageSizes?:false)
@@ -155,6 +155,8 @@ class RemotePaginationTagLib {
         def property = attrs.remove("property")
         String defaultOrder = attrs.remove("defaultOrder")
         if (defaultOrder != "desc") defaultOrder = "asc"
+        attrs.offset = params.int('offset') ?: (attrs.offset?:0)
+        attrs.max = params.int('max') ?: (attrs.max?:10)
         Map linkTagAttrs = attrs
 
         // current sorting property and order
@@ -221,8 +223,8 @@ class RemotePaginationTagLib {
         def locale = RCU.getLocale(request)
 
         Integer total = attrs.total.toInteger()
-        Integer offset = params.offset?.toInteger()
-        Integer max = params.max?.toInteger()
+        Integer offset = params.int('offset')
+        Integer max = params.int('max')
         String title = attrs.title?:'Show more...'
 
         if (!offset) offset = (attrs.offset ? attrs.offset.toInteger() : 0)

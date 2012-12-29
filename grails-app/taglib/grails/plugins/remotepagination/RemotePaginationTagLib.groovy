@@ -1,27 +1,28 @@
-package com.intelligrape.util
+package grails.plugins.remotepagination
 
 import org.springframework.web.servlet.support.RequestContextUtils as RCU
 
 /**
  * This tag enables pagination on the list asynchronously.
- * @author Amit Jain (amit@intelligrape.com)
+ * @author Amit Jain (amitjain1982@gmail.com)
  */
 class RemotePaginationTagLib {
     static namespace = "util"
+    def grailsApplication
 
     def remotePaginate = {attrs ->
         def writer = out
 
-        if (attrs.total == null)
+        if (!attrs.total)
             throwTagError("Tag [remotePaginate] is missing required attribute [total]")
 
-        if (attrs.update == null)
+        if (!attrs.update)
             throwTagError("Tag [remotePaginate] is missing required attribute [update]")
 
         if (!attrs.action)
             throwTagError("Tag [remotePaginate] is missing required attribute [action]")
 
-        def messageSource = grailsAttributes.getApplicationContext().getBean("messageSource")
+        def messageSource = grailsApplication.getMainContext().getBean("messageSource")
         def locale = RCU.getLocale(request)
 
         Integer total = attrs.total.toInteger()
@@ -35,7 +36,7 @@ class RemotePaginationTagLib {
 
         if (!offset) offset = (attrs.offset ? attrs.offset.toInteger() : 0)
 
-        if (!max) max = (attrs.max ? attrs.max.toInteger() : 10)
+        if (!max) max = (attrs.max ? attrs.max.toInteger() : grailsApplication.config.grails.plugins.remotepagination.max as Integer)
 
         if (!maxsteps) maxsteps = (attrs.maxsteps ? attrs.maxsteps.toInteger() : 10)
 
@@ -156,7 +157,7 @@ class RemotePaginationTagLib {
         String defaultOrder = attrs.remove("defaultOrder")
         if (defaultOrder != "desc") defaultOrder = "asc"
         attrs.offset = params.int('offset') ?: (attrs.offset?:0)
-        attrs.max = params.int('max') ?: (attrs.max?:10)
+        attrs.max = params.int('max') ?: (attrs.max?:grailsApplication.config.grails.plugins.remotepagination.max)
         Map linkTagAttrs = attrs
 
         // current sorting property and order
@@ -211,13 +212,13 @@ class RemotePaginationTagLib {
         def writer = out
 
         if (attrs.total == null)
-            throwTagError("Tag [moreRecords] is missing required attribute [total]")
+            throwTagError("Tag [remotePageScroll] is missing required attribute [total]")
 
         if (attrs.update == null)
-            throwTagError("Tag [moreRecords] is missing required attribute [update]")
+            throwTagError("Tag [remotePageScroll] is missing required attribute [update]")
 
         if (!attrs.action)
-            throwTagError("Tag [moreRecords] is missing required attribute [action]")
+            throwTagError("Tag [remotePageScroll] is missing required attribute [action]")
 
         def messageSource = grailsAttributes.getApplicationContext().getBean("messageSource")
         def locale = RCU.getLocale(request)
@@ -229,7 +230,7 @@ class RemotePaginationTagLib {
 
         if (!offset) offset = (attrs.offset ? attrs.offset.toInteger() : 0)
 
-        if (!max) max = (attrs.max ? attrs.max.toInteger() : 10)
+        if (!max) max = (attrs.max ? attrs.max.toInteger() : grailsApplication.config.grails.plugins.remotepagination.max as Integer)
 
         Map linkParams = [offset: offset - max, max: max]
         Map selectParams = [:]

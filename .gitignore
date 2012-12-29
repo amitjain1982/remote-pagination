@@ -11,4 +11,5 @@
 */*.zip
 */*.sha1
 stacktrace.log
-
+target/
+**/*.html

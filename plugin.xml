@@ -1,13 +1,25 @@
-<plugin name='remote-pagination' version='0.3' grailsVersion='1.1 &gt; *'>
+<plugin name='remote-pagination' version='0.4' grailsVersion='2.0.3 &gt; *'>
   <author>Amit Jain</author>
-  <authorEmail>amit@intelligrape.com</authorEmail>
+  <authorEmail>amitjain1982@gmail.com</authorEmail>
   <title>Remote Pagination Plugin</title>
   <description>
-   Remote-Pagination plugin provides tags for pagination and to sort columns without page refresh, using ajax and loads only the list of objects needed. It supports multiple paginations as well. More than one remotePaginate, remotePageScroll and remoteSortableColumn can be used on the same page unlike non-ajax pagination tags.
+   Remote-Pagination plugin provides tags for pagination and to sort columns without page refresh, using ajax and loads only the list of objects needed. It supports multiple paginations as well. More than one remotePaginate, remotePageScroll, remoteNonStopPageScroll and remoteSortableColumn can be used on the same page unlike non-ajax pagination tags.
 </description>
   <documentation>http://grails.org/RemotePagination+Plugin</documentation>
+  <type>RemotePaginationGrailsPlugin</type>
   <resources>
-    <resource>com.intelligrape.util.RemotePaginationTagLib</resource>
+    <resource>grails.plugins.remotepagination.RemotePaginationTagLib</resource>
   </resources>
+  <repositories>
+    <repository name='grailsCentral' url='http://plugins.grails.org' />
+    <repository name='http://repo.grails.org/grails/plugins' url='http://repo.grails.org/grails/plugins/' />
+    <repository name='http://repo.grails.org/grails/core' url='http://repo.grails.org/grails/core/' />
+    <repository name='grailsCore' url='http://svn.codehaus.org/grails/trunk/grails-plugins' />
+    <repository name='mavenCentral' url='http://repo1.maven.org/maven2/' />
+    <repository name='http://grails.org/plugins' url='http://grails.org/plugins' />
+  </repositories>
   <dependencies />
+  <plugins />
+  <runtimePluginRequirements />
+  <behavior />
 </plugin>

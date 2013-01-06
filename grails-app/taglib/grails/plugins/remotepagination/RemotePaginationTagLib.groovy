@@ -157,7 +157,7 @@ class RemotePaginationTagLib {
         String defaultOrder = attrs.remove("defaultOrder")
         if (defaultOrder != "desc") defaultOrder = "asc"
         attrs.offset = params.int('offset') ?: (attrs.offset?:0)
-        attrs.max = params.int('max') ?: (attrs.max?:grailsApplication.config.grails.plugins.remotepagination.max)
+        attrs.max = params.int('max') ?: (attrs.max?:grailsApplication.config.grails.plugins.remotepagination.max as Integer)
         Map linkTagAttrs = attrs
 
         // current sorting property and order
@@ -261,5 +261,60 @@ class RemotePaginationTagLib {
             out << linkHtml
             out << '</div>'
         }
+    }
+
+    def remoteNonStopPageScroll = {attrs->
+        def writer = out
+
+        if (attrs.total == null)
+            throwTagError("Tag [remoteNonStopPageScroll] is missing required attribute [total]")
+
+        if (attrs.update == null)
+            throwTagError("Tag [remoteNonStopPageScroll] is missing required attribute [update]")
+
+        if (!attrs.action)
+            throwTagError("Tag [remoteNonStopPageScroll] is missing required attribute [action]")
+
+        Integer total = attrs.total.toInteger()
+        Integer offset = params.int('offset')
+        Integer max = params.int('max')
+
+        if (!offset) offset = (attrs.offset ? attrs.offset.toInteger() : 0)
+
+        if (!max) max = (attrs.max ? attrs.max.toInteger() : grailsApplication.config.grails.plugins.remotepagination.max as Integer)
+
+        Map linkParams = [max: max]
+        if (params.sort) linkParams.sort = params.sort
+        if (params.order) linkParams.order = params.order
+        if (attrs.params) {
+            linkParams.putAll(attrs.params)
+        }
+
+        Map linkTagAttrs = attrs
+
+        if (attrs.id != null) {linkTagAttrs.id = attrs.id}
+
+        writer << "<script type='text/javascript'>"
+        if (offset + max < total) {
+            linkParams.offset = offset + max
+            linkTagAttrs.params = linkParams
+            attrs.url = createLink(linkTagAttrs.clone())
+            writer << """
+                jQuery('#${attrs.update}').data('remote-pagination-updatedOptions',{
+                     url:"${attrs.url}",
+                     scrollTarget:${attrs.scrollTarget?:'window'},
+                     heightOffset:${attrs.heightOffset?.toInteger()?:10},
+                     onLoading : ${attrs.onLoading?:null},
+                     onComplete : ${attrs.onComplete?:null},
+                     onSuccess : ${attrs.onSuccess?:null},
+                     onFailure : ${attrs.onFailure?:null}
+                     });
+                jQuery(document).ready(function(){jQuery("#${attrs.update}").remoteNonStopPageScroll({})});
+            """
+        }else{
+            writer << "jQuery('#${attrs.update}').stopRemotePaginateOnScroll();"
+        }
+        writer << "</script>"
+
     }
 }

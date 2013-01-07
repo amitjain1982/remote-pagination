@@ -10,7 +10,7 @@
     var UPDATED_OPTIONS = 'remote-pagination-updatedOptions';
     var SCROLLING = 'remote-pagination';
     var STATUS = 'data-remote-pagination-status';
-    var LOAD_SEMAPHORE = true;
+    var LOAD_SEMAPHORE = 'remote-pagination-semaphore';
 
     $.fn.remoteNonStopPageScroll = function (options) {
         if ($(this).data(SCROLL_INITIALIZED)!=true) {
@@ -38,13 +38,13 @@
         opts = $.extend(opts, $(obj).data(UPDATED_OPTIONS) || {});
         var target = $(opts.scrollTarget);
         var mayLoadContent = (target.scrollTop() + opts.heightOffset) >= ($(document).height() - target.height());
-        if (mayLoadContent && LOAD_SEMAPHORE) {
+        if (mayLoadContent && $(obj).data(LOAD_SEMAPHORE)) {
             if (opts.onLoading != null) {
                 opts.onLoading();
             }
 
             $(obj).children().attr(STATUS, 'loaded');
-            LOAD_SEMAPHORE =false;
+            $.fn.remoteNonStopPageScroll.setSemaphore(obj,false);
             $.ajax({
                 type:'POST',
                 url:opts.url,
@@ -55,16 +55,16 @@
                     if (opts.onSuccess != null) {
                         opts.onSuccess(objectsRendered);
                     }
+                    $.fn.remoteNonStopPageScroll.setSemaphore(obj,true);
                 }, failure:function (data) {
                     if (opts.onFailure != null) {
                         opts.onFailure();
                     }
-                    LOAD_SEMAPHORE = true;
+                    $.fn.remoteNonStopPageScroll.setSemaphore(obj,true);
                 }, complete:function (data) {
                     if (opts.onComplete != null) {
                         opts.onComplete();
                     }
-                    LOAD_SEMAPHORE = true;
                 },
                 dataType:'html'
             });
@@ -75,7 +75,7 @@
     $.fn.remoteNonStopPageScroll.init = function (obj, opts) {
         opts = $.extend(opts, $(obj).data(UPDATED_OPTIONS) || {});
         var target = opts.scrollTarget;
-        $(obj).data(SCROLLING, 'enabled');
+        $(obj).data(SCROLLING, 'enabled').data(LOAD_SEMAPHORE, true);
 
         $(target).scroll(function (event) {
             if ($(obj).data(SCROLLING) == 'enabled') {
@@ -88,6 +88,10 @@
 
         $.fn.remoteNonStopPageScroll.loadContent(obj, opts);
     };
+
+    $.fn.remoteNonStopPageScroll.setSemaphore = function(obj, value){
+        $(obj).data(LOAD_SEMAPHORE,value);
+    }
 
     $.fn.remoteNonStopPageScroll.defaults = {
         'url':null,

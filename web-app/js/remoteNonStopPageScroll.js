@@ -1,5 +1,5 @@
 /*
- **	This plugin was originally developed by Anderson Ferminiano (contato@andersonferminiano.com)
+ **	This plugin is inspired from  jQuery Scroll pagination plugin
  ** I have updated it to suit my requirements.
  ** Amit Jain
  ** amitjain1982@gmail.com
@@ -13,17 +13,18 @@
     var LOAD_SEMAPHORE = 'remote-pagination-semaphore';
 
     $.fn.remoteNonStopPageScroll = function (options) {
-        if ($(this).data(SCROLL_INITIALIZED)!=true) {
-            $(this).data(SCROLL_INITIALIZED,true);
+        var container = $(this);
+        if (container.data(SCROLL_INITIALIZED)!=true) {
+            container.data(SCROLL_INITIALIZED,true);
             var opts = $.extend($.fn.remoteNonStopPageScroll.defaults, options);
             var target = opts.scrollTarget;
             if (target == null) {
-                target = $(this);
+                target = container;
             }
             opts.scrollTarget = target;
 
-            return this.each(function () {
-                $.fn.remoteNonStopPageScroll.init($(this), opts);
+            return container.each(function () {
+                $.fn.remoteNonStopPageScroll.init(container, opts);
             });
         }
     };
@@ -34,33 +35,33 @@
         });
     };
 
-    $.fn.remoteNonStopPageScroll.loadContent = function (obj, opts) {
-        opts = $.extend(opts, $(obj).data(UPDATED_OPTIONS) || {});
+    $.fn.remoteNonStopPageScroll.loadContent = function (container, opts) {
+        opts = $.extend(opts, $(container).data(UPDATED_OPTIONS) || {});
         var target = $(opts.scrollTarget);
         var mayLoadContent = (target.scrollTop() + opts.heightOffset) >= ($(document).height() - target.height());
-        if (mayLoadContent && $(obj).data(LOAD_SEMAPHORE)) {
+        if (mayLoadContent && $(container).data(LOAD_SEMAPHORE)) {
             if (opts.onLoading != null) {
                 opts.onLoading();
             }
 
-            $(obj).children().attr(STATUS, 'loaded');
-            $.fn.remoteNonStopPageScroll.setSemaphore(obj,false);
+            $(container).children().attr(STATUS, 'loaded');
+            $.fn.remoteNonStopPageScroll.setSemaphore(container,false);
             $.ajax({
                 type:'POST',
                 url:opts.url,
                 data:{},
                 success:function (data) {
-                    $(obj).append(data);
-                    var objectsRendered = $(obj).children('['+STATUS+'!=loaded]');
+                    $(container).append(data);
+                    var objectsRendered = $(container).children('['+STATUS+'!=loaded]');
                     if (opts.onSuccess != null) {
                         opts.onSuccess(objectsRendered);
                     }
-                    $.fn.remoteNonStopPageScroll.setSemaphore(obj,true);
+                    $.fn.remoteNonStopPageScroll.setSemaphore(container,true);
                 }, failure:function (data) {
                     if (opts.onFailure != null) {
                         opts.onFailure();
                     }
-                    $.fn.remoteNonStopPageScroll.setSemaphore(obj,true);
+                    $.fn.remoteNonStopPageScroll.setSemaphore(container,true);
                 }, complete:function (data) {
                     if (opts.onComplete != null) {
                         opts.onComplete();
@@ -72,25 +73,25 @@
 
     };
 
-    $.fn.remoteNonStopPageScroll.init = function (obj, opts) {
-        opts = $.extend(opts, $(obj).data(UPDATED_OPTIONS) || {});
+    $.fn.remoteNonStopPageScroll.init = function (container, opts) {
+        opts = $.extend(opts, $(container).data(UPDATED_OPTIONS) || {});
         var target = opts.scrollTarget;
-        $(obj).data(SCROLLING, 'enabled').data(LOAD_SEMAPHORE, true);
+        $(container).data(SCROLLING, 'enabled').data(LOAD_SEMAPHORE, true);
 
         $(target).scroll(function (event) {
-            if ($(obj).data(SCROLLING) == 'enabled') {
-                $.fn.remoteNonStopPageScroll.loadContent(obj, opts);
+            if ($(container).data(SCROLLING) == 'enabled') {
+                $.fn.remoteNonStopPageScroll.loadContent(container, opts);
             }
             else {
                 event.stopPropagation();
             }
         });
 
-        $.fn.remoteNonStopPageScroll.loadContent(obj, opts);
+        $.fn.remoteNonStopPageScroll.loadContent(container, opts);
     };
 
-    $.fn.remoteNonStopPageScroll.setSemaphore = function(obj, value){
-        $(obj).data(LOAD_SEMAPHORE,value);
+    $.fn.remoteNonStopPageScroll.setSemaphore = function(container, value){
+        $(container).data(LOAD_SEMAPHORE,value);
     }
 
     $.fn.remoteNonStopPageScroll.defaults = {

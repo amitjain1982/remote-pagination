@@ -29,6 +29,23 @@
         }
     };
 
+    $.fn.remoteNonStopPageScroll.init = function (container, opts) {
+        opts = $.extend(opts, container.data(UPDATED_OPTIONS) || {});
+        var target = opts.scrollTarget;
+        container.data(SCROLLING, 'enabled').data(LOAD_SEMAPHORE, true);
+
+        $(target).scroll(function (event) {
+            if (container.data(SCROLLING) == 'enabled') {
+                $.fn.remoteNonStopPageScroll.loadContent(container, opts);
+            }
+            else {
+                event.stopPropagation();
+            }
+        });
+
+        $.fn.remoteNonStopPageScroll.loadContent(container, opts);
+    };
+
     $.fn.stopRemotePaginateOnScroll = function () {
         return this.each(function () {
             $(this).data(SCROLLING, 'disabled');
@@ -40,7 +57,7 @@
         var target = $(opts.scrollTarget);
         var mayLoadContent = (target.scrollTop() + opts.heightOffset) >= ($(document).height() - target.height());
         if (mayLoadContent && container.data(LOAD_SEMAPHORE)) {
-
+            $.fn.remoteNonStopPageScroll.loadingHTML(container,opts,true);
             if (opts.onLoading != null) {
                 opts.onLoading();
             }
@@ -64,6 +81,7 @@
                     }
                     $.fn.remoteNonStopPageScroll.setSemaphore(container,true);
                 }, complete:function (data) {
+                    $.fn.remoteNonStopPageScroll.loadingHTML(container,opts,false);
                     if (opts.onComplete != null) {
                         opts.onComplete();
                     }
@@ -74,26 +92,21 @@
 
     };
 
-    $.fn.remoteNonStopPageScroll.init = function (container, opts) {
-        opts = $.extend(opts, container.data(UPDATED_OPTIONS) || {});
-        var target = opts.scrollTarget;
-        container.data(SCROLLING, 'enabled').data(LOAD_SEMAPHORE, true);
-
-        $(target).scroll(function (event) {
-            if (container.data(SCROLLING) == 'enabled') {
-                $.fn.remoteNonStopPageScroll.loadContent(container, opts);
+    $.fn.remoteNonStopPageScroll.loadingHTML = function(container, opts, display){
+        var loadingDivId = opts.loadingHTML;
+        if(loadingDivId!=null){
+            if(display){
+                var loadingDivContent = $("#"+loadingDivId).clone().wrap('<p>').parent().html();
+                container.append("<span class='paginationLoadingSpan'>" +loadingDivContent+"</span>").find("#"+loadingDivId).show();
+            }else{
+                container.find(".paginationLoadingSpan").remove();
             }
-            else {
-                event.stopPropagation();
-            }
-        });
-
-        $.fn.remoteNonStopPageScroll.loadContent(container, opts);
+        }
     };
 
     $.fn.remoteNonStopPageScroll.setSemaphore = function(container, value){
         container.data(LOAD_SEMAPHORE,value);
-    }
+    };
 
     $.fn.remoteNonStopPageScroll.defaults = {
         'url':null,
@@ -102,6 +115,7 @@
         'onFailure':null,
         'onComplete':null,
         'scrollTarget':null,
-        'heightOffset':0
+        'heightOffset':0,
+        'loadingHTML':null
     };
 })(jQuery);

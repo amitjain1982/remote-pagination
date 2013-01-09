@@ -307,7 +307,8 @@ class RemotePaginationTagLib {
                      onLoading : ${attrs.onLoading?:null},
                      onComplete : ${attrs.onComplete?:null},
                      onSuccess : ${attrs.onSuccess?:null},
-                     onFailure : ${attrs.onFailure?:null}
+                     onFailure : ${attrs.onFailure?:null},
+                     loadingHTML:'${attrs.loadingHTML?:null}'
                      });
                 jQuery(document).ready(function(){jQuery("#${attrs.update}").remoteNonStopPageScroll({})});
             """

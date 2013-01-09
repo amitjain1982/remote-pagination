@@ -36,23 +36,24 @@
     };
 
     $.fn.remoteNonStopPageScroll.loadContent = function (container, opts) {
-        opts = $.extend(opts, $(container).data(UPDATED_OPTIONS) || {});
+        opts = $.extend(opts, container.data(UPDATED_OPTIONS) || {});
         var target = $(opts.scrollTarget);
         var mayLoadContent = (target.scrollTop() + opts.heightOffset) >= ($(document).height() - target.height());
-        if (mayLoadContent && $(container).data(LOAD_SEMAPHORE)) {
+        if (mayLoadContent && container.data(LOAD_SEMAPHORE)) {
+
             if (opts.onLoading != null) {
                 opts.onLoading();
             }
 
-            $(container).children().attr(STATUS, 'loaded');
+            container.children().attr(STATUS, 'loaded');
             $.fn.remoteNonStopPageScroll.setSemaphore(container,false);
             $.ajax({
                 type:'POST',
                 url:opts.url,
                 data:{},
                 success:function (data) {
-                    $(container).append(data);
-                    var objectsRendered = $(container).children('['+STATUS+'!=loaded]');
+                    container.append(data);
+                    var objectsRendered = container.children('['+STATUS+'!=loaded]');
                     if (opts.onSuccess != null) {
                         opts.onSuccess(objectsRendered);
                     }
@@ -74,12 +75,12 @@
     };
 
     $.fn.remoteNonStopPageScroll.init = function (container, opts) {
-        opts = $.extend(opts, $(container).data(UPDATED_OPTIONS) || {});
+        opts = $.extend(opts, container.data(UPDATED_OPTIONS) || {});
         var target = opts.scrollTarget;
-        $(container).data(SCROLLING, 'enabled').data(LOAD_SEMAPHORE, true);
+        container.data(SCROLLING, 'enabled').data(LOAD_SEMAPHORE, true);
 
         $(target).scroll(function (event) {
-            if ($(container).data(SCROLLING) == 'enabled') {
+            if (container.data(SCROLLING) == 'enabled') {
                 $.fn.remoteNonStopPageScroll.loadContent(container, opts);
             }
             else {
@@ -91,7 +92,7 @@
     };
 
     $.fn.remoteNonStopPageScroll.setSemaphore = function(container, value){
-        $(container).data(LOAD_SEMAPHORE,value);
+        container.data(LOAD_SEMAPHORE,value);
     }
 
     $.fn.remoteNonStopPageScroll.defaults = {

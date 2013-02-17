@@ -131,7 +131,7 @@ Attributes update, action and total are required. This should reside in a templa
   * params (optional) - A map containing request parameters
   * title (optional) - The text to display for the link (defaults to "Show more...", precedence is given to 'paginate.more.title' property if found in I18n messages.properties).
   * max (optional) - The number of records displayed per page (defaults to 10). Used ONLY if params.max is empty
-  * offset (optional) - Used ONLY if params.offset is empty
+  * offset (optional) - Used ONLY if params.offset is empty 
 
 ### Events
   * onSuccess (optional) - The javascript function to call if successful
@@ -154,7 +154,7 @@ Examples
 &lt;g:javascript plugin="remote-pagination" library="remoteNonStopPageScroll"/&gt;<br/>
 &lt;util:remoteNonStopPageScroll action='filter' total="${total}" update="listTemplateDivId" /&gt;
 &lt;util:remoteNonStopPageScroll action='filter' controller="book"  total="${total}" 
-update="listTemplateDivId" heightOffset="10" /&gt;
+update="listTemplateDivId" heightOffset="10" loadingHtml="loadingGifDivId" /&gt;
 </pre></code>
 ### Description
 Attributes update, action and total are required. This tag should reside in a template for example "_listTemplate.gsp", which loops through the records to be displayed iteratively. 
@@ -167,6 +167,8 @@ Attributes update, action and total are required. This tag should reside in a te
  * params (optional) - A map containing request parameters    
  * max (optional) - The number of records displayed per page (defaults to 10). Used ONLY if params.max is empty
  * offset (optional) - Used ONLY if params.offset is empty
+ * loadingHTML (optional) - The id of div/span to be displayed while waiting for response from the server. 
+ * heightOffset (optional) : Request for more records when scroll is <heightOffset> pixels before the page ends. Defaults to 10. 
 
 ### Events
  * onSuccess (optional) - The javascript function to call if successful
@@ -175,6 +177,7 @@ Attributes update, action and total are required. This tag should reside in a te
  * onComplete (optional) -The javascript function to call when the remote function is complete, including any updates
 
 ## Version History
+  * O.4.1 : Added loadingHTML property to remoteNonStopPageScroll tag.
   * 0.4 :- Added remoteNonStopPageScroll tag. Also the default max elements for all remote pagination tags can be provided in the config.groovy. This plugin has been upgraded to work with grails versions >= 2.0.3.
   * 0.3 :- Added remotePageScroll tag, In remotePaginateTag, pageSizes now accept both Map & List and also added new option alwaysShowPageSizes.
   * 0.2.8 :- Fixed jira [issue](http://jira.grails.org/browse/GPREMOTEPAGINATION-9/)

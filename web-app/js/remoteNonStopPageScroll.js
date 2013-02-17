@@ -55,7 +55,6 @@
     $.fn.remoteNonStopPageScroll.loadContent = function (container, opts) {
         opts = $.extend(opts, container.data(UPDATED_OPTIONS) || {});
         var target = $(opts.scrollTarget);
-        var oldPosition =target.scrollTop();
         var mayLoadContent = target.height() + target.scrollTop() + opts.heightOffset  >= $(document).height();
         if (mayLoadContent && container.data(LOAD_SEMAPHORE)) {
             $.fn.remoteNonStopPageScroll.loadingHTML(container,opts,true);
@@ -70,6 +69,7 @@
                 url:opts.url,
                 data:{},
                 success:function (data) {
+                    var oldPosition =target.scrollTop();
                     container.append(data);
                     target.scrollTop(oldPosition-1);
 

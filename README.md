@@ -177,7 +177,8 @@ Attributes update, action and total are required. This tag should reside in a te
  * onComplete (optional) -The javascript function to call when the remote function is complete, including any updates
 
 ## Version History
-  * O.4.1 : Added loadingHTML property to remoteNonStopPageScroll tag.
+  * 0.4.2 : Fixed bug with remoteNonStopPageScroll of loading all data at once in certain scenario. rer#2
+  * 0.4.1 : Added loadingHTML property to remoteNonStopPageScroll tag.
   * 0.4 :- Added remoteNonStopPageScroll tag. Also the default max elements for all remote pagination tags can be provided in the config.groovy. This plugin has been upgraded to work with grails versions >= 2.0.3.
   * 0.3 :- Added remotePageScroll tag, In remotePaginateTag, pageSizes now accept both Map & List and also added new option alwaysShowPageSizes.
   * 0.2.8 :- Fixed jira [issue](http://jira.grails.org/browse/GPREMOTEPAGINATION-9/)

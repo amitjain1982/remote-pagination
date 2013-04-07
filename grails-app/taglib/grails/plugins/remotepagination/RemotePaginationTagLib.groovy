@@ -13,7 +13,7 @@ class RemotePaginationTagLib {
     def remotePaginate = {attrs ->
         def writer = out
 
-        if (!attrs.total)
+        if (attrs.total == null)
             throwTagError("Tag [remotePaginate] is missing required attribute [total]")
 
         if (!attrs.update)
@@ -25,20 +25,14 @@ class RemotePaginationTagLib {
         def messageSource = grailsApplication.getMainContext().getBean("messageSource")
         def locale = RCU.getLocale(request)
 
-        Integer total = attrs.total.toInteger()
-        Integer offset = params.int('offset')
-        Integer max = params.int('max')
-        Integer maxsteps = params.maxsteps?.toInteger()
-        def pageSizes = attrs.pageSizes ?: []
+        Integer total = attrs.int('total')?: 0
+        Integer offset = params.int('offset') ?: (attrs.int('offset') ?: 0)
+        Integer max = params.int('max') ?: (attrs.int('max')  ?: grailsApplication.config.grails.plugins.remotepagination.max as Integer)
+        Integer maxsteps = params.int('maxsteps') ?: (attrs.int('maxsteps') ?: 10)
         Boolean alwaysShowPageSizes = new Boolean(attrs.alwaysShowPageSizes?:false)
+        def pageSizes = attrs.pageSizes ?: []
         Map linkTagAttrs = attrs
 
-
-        if (!offset) offset = (attrs.offset ? attrs.offset.toInteger() : 0)
-
-        if (!max) max = (attrs.max ? attrs.max.toInteger() : grailsApplication.config.grails.plugins.remotepagination.max as Integer)
-
-        if (!maxsteps) maxsteps = (attrs.maxsteps ? attrs.maxsteps.toInteger() : 10)
 
         Map linkParams = [offset: offset - max, max: max]
         Map selectParams = [:]
@@ -157,7 +151,7 @@ class RemotePaginationTagLib {
         String defaultOrder = attrs.remove("defaultOrder")
         if (defaultOrder != "desc") defaultOrder = "asc"
         attrs.offset = params.int('offset') ?: (attrs.offset?:0)
-        attrs.max = params.int('max') ?: (attrs.max?:grailsApplication.config.grails.plugins.remotepagination.max as Integer)
+        attrs.max = params.int('max') ?: (attrs.int('max')?:grailsApplication.config.grails.plugins.remotepagination.max as Integer)
         Map linkTagAttrs = attrs
 
         // current sorting property and order
@@ -223,14 +217,10 @@ class RemotePaginationTagLib {
         def messageSource = grailsAttributes.getApplicationContext().getBean("messageSource")
         def locale = RCU.getLocale(request)
 
-        Integer total = attrs.total.toInteger()
-        Integer offset = params.int('offset')
-        Integer max = params.int('max')
+        Integer total = attrs.int('total')?: 0
+        Integer offset = params.int('offset') ?: (attrs.int('offset') ?: 0)
+        Integer max = params.int('max') ?: (attrs.int('max')  ?: grailsApplication.config.grails.plugins.remotepagination.max as Integer)
         String title = attrs.title?:'Show more...'
-
-        if (!offset) offset = (attrs.offset ? attrs.offset.toInteger() : 0)
-
-        if (!max) max = (attrs.max ? attrs.max.toInteger() : grailsApplication.config.grails.plugins.remotepagination.max as Integer)
 
         Map linkParams = [offset: offset - max, max: max]
         Map selectParams = [:]
@@ -275,13 +265,9 @@ class RemotePaginationTagLib {
         if (!attrs.action)
             throwTagError("Tag [remoteNonStopPageScroll] is missing required attribute [action]")
 
-        Integer total = attrs.total.toInteger()
-        Integer offset = params.int('offset')
-        Integer max = params.int('max')
-
-        if (!offset) offset = (attrs.offset ? attrs.offset.toInteger() : 0)
-
-        if (!max) max = (attrs.max ? attrs.max.toInteger() : grailsApplication.config.grails.plugins.remotepagination.max as Integer)
+        Integer total = attrs.int('total')?: 0
+        Integer offset = params.int('offset') ?: (attrs.int('offset') ?: 0)
+        Integer max = params.int('max') ?: (attrs.int('max')  ?: grailsApplication.config.grails.plugins.remotepagination.max as Integer)
 
         Map linkParams = [max: max]
         if (params.sort) linkParams.sort = params.sort

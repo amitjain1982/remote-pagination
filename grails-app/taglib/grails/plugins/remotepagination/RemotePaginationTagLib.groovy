@@ -296,10 +296,10 @@ class RemotePaginationTagLib {
                      onFailure : ${attrs.onFailure?:null},
                      loadingHTML:'${attrs.loadingHTML?:null}'
                      });
-                jQuery(document).ready(function(){jQuery("#${attrs.update}").remoteNonStopPageScroll({})});
+                jQuery(document).ready(function(){jQuery("#${attrs.update}").remoteNonStopPageScroll({});});
             """
         }else{
-            writer << "jQuery('#${attrs.update}').stopRemotePaginateOnScroll();"
+            writer << "jQuery(document).ready(function(){jQuery('#${attrs.update}').stopRemotePaginateOnScroll();});"
         }
         writer << "</script>"
 

@@ -73,6 +73,7 @@ Attributes update, action and total are required.
   * onLoading (optional) - The javascript function to call when the remote function is loading the response
   * onLoaded (optional) - The javascript function to call when the remote function is completed loading the response
   * onComplete (optional) - The javascript function to call when the remote function is complete, including any updates
+
 ## util:remoteSortableColumn
 
 ### Purpose

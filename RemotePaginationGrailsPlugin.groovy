@@ -30,6 +30,9 @@ class RemotePaginationGrailsPlugin {
         if(!application.config.grails?.plugins?.remotepagination?.max){
             application.config.grails.plugins.remotepagination.max = 10
         }
+		if(!application.config.grails?.plugins?.remotepagination?.enableBootstrap){
+	    	application.config.grails.plugins.remotepagination.enableBootstrap = false
+	    }
     }
 
     def doWithWebDescriptor = { xml ->

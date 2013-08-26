@@ -33,6 +33,7 @@ class RemotePaginationTagLib {
         def pageSizes = attrs.pageSizes ?: []
         Map linkTagAttrs = attrs
 		boolean bootstrapEnabled = grailsApplication.config.grails.plugins.remotepagination.enableBootstrap as boolean
+
 		if(bootstrapEnabled){
 			writer << '<ul>'
 		}
@@ -59,7 +60,7 @@ class RemotePaginationTagLib {
         if (currentstep > firststep) {
             linkTagAttrs.class = 'prevLink'
             linkParams.offset = offset - max
-            writer << wrapInListItemIfBootstrapEnabled(remoteLink(linkTagAttrs.clone()) {
+            writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) {
                 (attrs.prev ? attrs.prev : messageSource.getMessage('paginate.prev', null, messageSource.getMessage('default.paginate.prev', null, 'Previous', locale), locale))
             })
         }
@@ -87,34 +88,34 @@ class RemotePaginationTagLib {
             // display firststep link when beginstep is not firststep
             if (beginstep > firststep) {
                 linkParams.offset = 0
-                writer << wrapInListItemIfBootstrapEnabled(remoteLink(linkTagAttrs.clone()) {
+                writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) {
                     firststep.toString()
                 })
-                writer << wrapInListItemIfBootstrapEnabled('<span class="step">..</span>')
+                writer << wrapInListItem(bootstrapEnabled,'<span class="step">..</span>')
             }
 
             // display paginate steps
             (beginstep..endstep).each {i ->
                 if (currentstep == i) {
-                    writer << wrapInListItemIfBootstrapEnabled("<span class=\"currentStep\">${i}</span>")
+                    writer << wrapInListItem(bootstrapEnabled,"<span class=\"currentStep\">${i}</span>")
                 } else {
                     linkParams.offset = (i - 1) * max
-                    writer << wrapInListItemIfBootstrapEnabled(remoteLink(linkTagAttrs.clone()) {i.toString()})
+                    writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) {i.toString()})
                 }
             }
 
             // display laststep link when endstep is not laststep
             if (endstep < laststep) {
-                writer << wrapInListItemIfBootstrapEnabled('<span class="step">..</span>')
+                writer << wrapInListItem(bootstrapEnabled,'<span class="step">..</span>')
                 linkParams.offset = (laststep - 1) * max
-                writer << wrapInListItemIfBootstrapEnabled(remoteLink(linkTagAttrs.clone()) { laststep.toString() })
+                writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) { laststep.toString() })
             }
         }
         // display next link when not on laststep
         if (currentstep < laststep) {
             linkTagAttrs.class = 'nextLink'
             linkParams.offset = offset + max
-            writer << wrapInListItemIfBootstrapEnabled(remoteLink(linkTagAttrs.clone()) {
+            writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) {
                 (attrs.next ? attrs.next : messageSource.getMessage('paginate.next', null, messageSource.getMessage('default.paginate.next', null, 'Next', locale), locale))
             })
         }
@@ -127,8 +128,12 @@ class RemotePaginationTagLib {
             linkTagAttrs.params = paramsStr
             Boolean isPageSizesMap = pageSizes instanceof Map
 
-            writer << wrapInListItemIfBootstrapEnabled("<span>" + select(from: pageSizes, value: max, name: "max", onchange: "${remoteFunction(linkTagAttrs.clone())}" ,class: 'remotepagesizes',
+            writer << wrapInListItem(bootstrapEnabled,"<span>" + select(from: pageSizes, value: max, name: "max", onchange: "${remoteFunction(linkTagAttrs.clone())}" ,class: 'remotepagesizes',
                     optionKey: isPageSizesMap?'key':'', optionValue: isPageSizesMap?'value':'') + "</span>")
+        }
+
+        if(bootstrapEnabled){
+            writer << '</ul>'
         }
     }
 
@@ -308,13 +313,7 @@ class RemotePaginationTagLib {
 
     }
 
-	private def wrapInListItemIfBootstrapEnabled(def val){
-		boolean bootstrapEnabled = grailsApplication.config.grails.plugins.remotepagination.enableBootstrap as boolean
-		if(bootstrapEnabled){
-			'<li>' + val + '</li>'
-		}
-		else{
-			val
-		}
+	private def wrapInListItem(Boolean bootstrapEnabled, def val){
+		bootstrapEnabled ? "<li>$val</li>" : val
 	}
 }

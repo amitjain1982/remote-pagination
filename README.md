@@ -10,6 +10,8 @@ We can provide default max elements to be displayed for all remote-paginate tags
 <code><pre>
 //In Config.groovy
 grails.plugins.remotepagination.max=20 
+//EnableBootstrap here when using twitter bootstrap, default is set to false.
+grails.plugins.remotepagination.enableBootstrap=true 
 </pre></code>
 # Tags
 The remote-pagination plugin currently provides the following tags:
@@ -178,6 +180,7 @@ Attributes update, action and total are required. This tag should reside in a te
  * onComplete (optional) -The javascript function to call when the remote function is complete, including any updates
 
 ## Version History
+  * 0.4.5 : Fix UI issues to work with Twitter bootstrap.
   * 0.4.4 : Fixed javascript error on page load.
   * 0.4.2 : Fixed bug with remoteNonStopPageScroll of loading all data at once in certain scenario. rer#2
   * 0.4.1 : Added loadingHTML property to remoteNonStopPageScroll tag.

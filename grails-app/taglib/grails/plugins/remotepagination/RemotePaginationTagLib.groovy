@@ -35,7 +35,7 @@ class RemotePaginationTagLib {
 		boolean bootstrapEnabled = grailsApplication.config.grails.plugins.remotepagination.enableBootstrap as boolean
 
 		if(bootstrapEnabled){
-			writer << '<ul>'
+			writer << '<ul class="pagination">'
 		}
 
         Map linkParams = [offset: offset - max, max: max]

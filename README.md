@@ -180,6 +180,7 @@ Attributes update, action and total are required. This tag should reside in a te
  * onComplete (optional) -The javascript function to call when the remote function is complete, including any updates
 
 ## Version History
+  * 0.4.6 : Fix UI issues to work with Twitter Bootstrap 3.0 and above. [issue](http://jira.grails.org/browse/GPREMOTEPAGINATION-15/) 
   * 0.4.5 : Fix UI issues to work with Twitter bootstrap.
   * 0.4.4 : Fixed javascript error on page load.
   * 0.4.2 : Fixed bug with remoteNonStopPageScroll of loading all data at once in certain scenario. rer#2

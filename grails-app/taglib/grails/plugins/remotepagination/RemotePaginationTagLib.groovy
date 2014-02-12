@@ -201,8 +201,7 @@ class RemotePaginationTagLib {
         attrs.each {k, v ->
             writer << "${k}=\"${v.encodeAsHTML()}\" "
         }
-        writer << """>${remoteLink(linkTagAttrs.clone()) { title } }
-                </th>"""
+        writer << """>${remoteLink(linkTagAttrs.clone()) { title } }</th>"""
     }
 
     /**

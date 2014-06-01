@@ -28,7 +28,7 @@ class RemotePaginationTagLib {
         Integer total = attrs.int('total')?: 0
         Integer offset = params.int('offset') ?: (attrs.int('offset') ?: 0)
         Integer max = params.int('max') ?: (attrs.int('max')  ?: grailsApplication.config.grails.plugins.remotepagination.max as Integer)
-        Integer maxsteps = params.int('maxsteps') ?: (attrs.int('maxsteps') ?: 10)
+        Integer maxsteps = (params.maxsteps ?: (attrs.maxsteps ?: 10))?.toInteger()
         Boolean alwaysShowPageSizes = new Boolean(attrs.alwaysShowPageSizes?:false)
         def pageSizes = attrs.pageSizes ?: []
         Map linkTagAttrs = attrs
@@ -201,8 +201,7 @@ class RemotePaginationTagLib {
         attrs.each {k, v ->
             writer << "${k}=\"${v.encodeAsHTML()}\" "
         }
-        writer << """>${remoteLink(linkTagAttrs.clone()) { title } }
-                </th>"""
+        writer << """>${remoteLink(linkTagAttrs.clone()) { title } }</th>"""
     }
 
     /**

@@ -43,6 +43,10 @@
             }
         });
 
+        $(window).resize(function() {
+            $.fn.remoteNonStopPageScroll.loadContent(container, opts);
+        });
+
         $.fn.remoteNonStopPageScroll.loadContent(container, opts);
     };
 

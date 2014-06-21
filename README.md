@@ -180,6 +180,7 @@ Attributes update, action and total are required. This tag should reside in a te
  * onComplete (optional) -The javascript function to call when the remote function is complete, including any updates
 
 ## Version History
+  * 0.4.8 : Fixes [PageNonStopScroll issue with window resize](https://github.com/amitjain1982/remote-pagination/issues/14)
   * 0.4.7 : Fixes [issue](https://github.com/amitjain1982/remote-pagination/issues/10),[issue](https://github.com/amitjain1982/remote-pagination/issues/11) & [issue](https://github.com/amitjain1982/remote-pagination/issues/13),
   * 0.4.6 : Fix UI issues to work with Twitter Bootstrap 3.0 and above. [issue](http://jira.grails.org/browse/GPREMOTEPAGINATION-15/) 
   * 0.4.5 : Fix UI issues to work with Twitter bootstrap.

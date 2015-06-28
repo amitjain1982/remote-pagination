@@ -13,3 +13,6 @@
 stacktrace.log
 target/
 **/*.html
+build
+.gradle
+gradle

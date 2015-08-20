@@ -1,4 +1,4 @@
-package remote.pagination.v
+package grails.plugins.remotepagination
 
 import grails.boot.GrailsApp
 import grails.boot.config.GrailsAutoConfiguration

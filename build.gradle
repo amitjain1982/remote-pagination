@@ -8,12 +8,13 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE"
     }
 }
 
 plugins {
-    id "io.spring.dependency-management" version "0.5.1.RELEASE"
-    id "com.jfrog.bintray" version "1.1"
+    id "io.spring.dependency-management" version "0.5.3.RELEASE"
+    id "com.jfrog.bintray" version "1.4"
 }
 
 version "0.5.0"
@@ -24,7 +25,6 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: "spring-boot"
 apply plugin: "org.grails.grails-plugin"
-apply plugin: "org.grails.grails-gsp"
 // Used for publishing to central repository, remove if not needed
 apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
 apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
@@ -68,4 +68,20 @@ dependencies {
 
 task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
+}
+
+bintray {
+    user=System.getenv('BINTRAY_USER')
+    key=System.getenv('BINTRAY_KEY')
+    publish = true
+    pkg {
+        userOrg = ''
+        name = "remote-pagination"
+        issueTrackerUrl = "https://github.com/amitjain1982/remote-pagination/issues"
+        vcsUrl = "https://github.com/amitjain1982/remote-pagination"
+        version {
+            attributes = ['grails-plugin': "org.grails.plugins:remote-pagination"]
+            name = "0.5.0"
+        }
+    }
 }

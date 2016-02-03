@@ -1,40 +1,32 @@
 package grails.plugins.remotepagination
 
-import grails.core.GrailsApplication
 import org.springframework.web.servlet.support.RequestContextUtils as RCU
 
 /**
- * This tag enables pagination on the list asynchronously.
+ * Enables pagination on the list asynchronously.
  * @author Amit Jain (amitjain1982@gmail.com)
  */
 class RemotePaginationTagLib {
     static namespace = "util"
 
-    GrailsApplication grailsApplication
+    def messageSource
 
     def remotePaginate = { attrs ->
+
+        assertNotNullAttribute attrs, 'total',  'remotePaginate'
+        assertAttribute        attrs, 'update', 'remotePaginate'
+        assertAttribute        attrs, 'total',  'remotePaginate'
+
         def writer = out
-
-        if (attrs.total == null)
-            throwTagError("Tag [remotePaginate] is missing required attribute [total]")
-
-        if (!attrs.update)
-            throwTagError("Tag [remotePaginate] is missing required attribute [update]")
-
-        if (!attrs.action)
-            throwTagError("Tag [remotePaginate] is missing required attribute [action]")
-
-        def messageSource = grailsApplication.getMainContext().getBean("messageSource")
-        def locale = RCU.getLocale(request)
 
         Integer total = attrs.int('total') ?: 0
         Integer offset = params.int('offset') ?: (attrs.int('offset') ?: 0)
-        Integer max = params.int('max') ?: (attrs.int('max') ?: grailsApplication.config.grails.plugins.remotepagination.max as Integer)
+        Integer max = params.int('max') ?: (attrs.int('max') ?: config.max as Integer)
         Integer maxsteps = (params.maxsteps ?: (attrs.maxsteps ?: 10))?.toInteger()
         Boolean alwaysShowPageSizes = new Boolean(attrs.alwaysShowPageSizes ?: false)
         def pageSizes = attrs.pageSizes ?: []
         Map linkTagAttrs = attrs
-        boolean bootstrapEnabled = grailsApplication.config.grails.plugins.remotepagination.enableBootstrap as boolean
+        boolean bootstrapEnabled = config.enableBootstrap as boolean
 
         if (bootstrapEnabled) {
             writer << '<ul class="pagination">'
@@ -102,7 +94,7 @@ class RemotePaginationTagLib {
             (beginstep..endstep).each { i ->
                 if (currentstep == i) {
                     String currentStepClass = bootstrapEnabled ? "active" : "currentStep"
-                    writer << wrapInListItem(bootstrapEnabled, "<span class=\"${currentStepClass}\">${i}</span>")
+                    writer << wrapInListItem(bootstrapEnabled, """<span class="$currentStepClass">$i</span>""")
                 } else {
                     linkParams.offset = (i - 1) * max
                     writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) { i.toString() })
@@ -147,24 +139,21 @@ class RemotePaginationTagLib {
      * @author Amit Jain (amit@intelligrape.com)
      */
     def remoteSortableColumn = { attrs ->
-        def writer = out
-        if (!attrs.property)
-            throwTagError("Tag [remoteSortableColumn] is missing required attribute [property]")
 
-        if (!attrs.title && !attrs.titleKey)
+        assertAttribute attrs, 'property', 'remoteSortableColumn'
+        assertAttribute attrs, 'update',   'remoteSortableColumn'
+        assertAttribute attrs, 'action',   'remoteSortableColumn'
+
+        if (!attrs.title && !attrs.titleKey) {
             throwTagError("Tag [remoteSortableColumn] is missing required attribute [title] or [titleKey]")
+        }
 
-        if (!attrs.update)
-            throwTagError("Tag [remoteSortableColumn] is missing required attribute [update]")
-
-        if (!attrs.action)
-            throwTagError("Tag [remoteSortableColumn] is missing required attribute [action]")
-
+        def writer = out
         def property = attrs.remove("property")
         String defaultOrder = attrs.remove("defaultOrder")
         if (defaultOrder != "desc") defaultOrder = "asc"
         attrs.offset = params.int('offset') ?: (attrs.offset ?: 0)
-        attrs.max = params.int('max') ?: (attrs.int('max') ?: grailsApplication.config.grails.plugins.remotepagination.max as Integer)
+        attrs.max = params.int('max') ?: (attrs.int('max') ?: config.max as Integer)
         Map linkTagAttrs = attrs
 
         // current sorting property and order
@@ -195,8 +184,6 @@ class RemotePaginationTagLib {
         def titleKey = attrs.remove("titleKey")
         if (titleKey) {
             if (!title) title = titleKey
-            def messageSource = grailsAttributes.getApplicationContext().getBean("messageSource")
-            def locale = RCU.getLocale(request)
             title = messageSource.getMessage(titleKey, null, title, locale)
         }
 
@@ -204,7 +191,7 @@ class RemotePaginationTagLib {
         writer << "<th "
         // process remaining attributes
         attrs.each { k, v ->
-            writer << "${k}=\"${v.encodeAsHTML()}\" "
+            writer << """${k}="${v.encodeAsHTML()}" """
         }
         writer << """>${remoteLink(linkTagAttrs.clone()) { title }}</th>"""
     }
@@ -215,23 +202,16 @@ class RemotePaginationTagLib {
      * @author Amit Jain (amit@intelligrape.com)
      */
     def remotePageScroll = { attrs ->
+
+        assertNotNullAttribute attrs, 'total',  'remotePageScroll'
+        assertNotNullAttribute attrs, 'update', 'remotePageScroll'
+        assertAttribute        attrs, 'action', 'remotePageScroll'
+
         def writer = out
-
-        if (attrs.total == null)
-            throwTagError("Tag [remotePageScroll] is missing required attribute [total]")
-
-        if (attrs.update == null)
-            throwTagError("Tag [remotePageScroll] is missing required attribute [update]")
-
-        if (!attrs.action)
-            throwTagError("Tag [remotePageScroll] is missing required attribute [action]")
-
-        def messageSource = grailsAttributes.getApplicationContext().getBean("messageSource")
-        def locale = RCU.getLocale(request)
 
         Integer total = attrs.int('total') ?: 0
         Integer offset = params.int('offset') ?: (attrs.int('offset') ?: 0)
-        Integer max = params.int('max') ?: (attrs.int('max') ?: grailsApplication.config.grails.plugins.remotepagination.max as Integer)
+        Integer max = params.int('max') ?: (attrs.int('max') ?: config.max as Integer)
         String title = attrs.title ?: 'Show more...'
 
         Map linkParams = [offset: offset - max, max: max]
@@ -268,20 +248,16 @@ class RemotePaginationTagLib {
     }
 
     def remoteNonStopPageScroll = { attrs ->
+
+        assertNotNullAttribute attrs, 'total',  'remoteNonStopPageScroll'
+        assertNotNullAttribute attrs, 'update', 'remoteNonStopPageScroll'
+        assertAttribute        attrs, 'action', 'remoteNonStopPageScroll'
+
         def writer = out
-
-        if (attrs.total == null)
-            throwTagError("Tag [remoteNonStopPageScroll] is missing required attribute [total]")
-
-        if (attrs.update == null)
-            throwTagError("Tag [remoteNonStopPageScroll] is missing required attribute [update]")
-
-        if (!attrs.action)
-            throwTagError("Tag [remoteNonStopPageScroll] is missing required attribute [action]")
 
         Integer total = attrs.int('total') ?: 0
         Integer offset = params.int('offset') ?: (attrs.int('offset') ?: 0)
-        Integer max = params.int('max') ?: (attrs.int('max') ?: grailsApplication.config.grails.plugins.remotepagination.max as Integer)
+        Integer max = params.int('max') ?: (attrs.int('max') ?: config.max as Integer)
 
         Map linkParams = [max: max]
         if (params.sort) linkParams.sort = params.sort
@@ -318,7 +294,6 @@ class RemotePaginationTagLib {
             writer << "jQuery(document).ready(function(){jQuery('#${attrs.update}').stopRemotePaginateOnScroll();});"
         }
         writer << "</script>"
-
     }
 
     def remoteLink = { attrs, body ->
@@ -337,7 +312,7 @@ class RemotePaginationTagLib {
         }
         // process remaining attributes
         attrs.each { k, v ->
-            out << ' ' << k << "=\"" << v << "\""
+            out << ' ' << k << '="' << v << '"'
         }
         out << ">"
         // output the body
@@ -389,7 +364,7 @@ class RemotePaginationTagLib {
      *
      * @return the jQuery-like formatted code for an AJAX-request
      */
-    private def doRemoteFunction(taglib, attrs, out) {
+    private doRemoteFunction(taglib, attrs, out) {
         // Optional, onLoad
         if (attrs.onLoading) {
             out << "${attrs.onLoading};"
@@ -481,7 +456,7 @@ class RemotePaginationTagLib {
      * @param attrs Attributes to use for the callback
      * @param out Variable to attache the output
      */
-    private def buildCallback(attrs, out) {
+    private buildCallback(attrs, out) {
         if (out) {
             out << ','
         }
@@ -528,7 +503,27 @@ class RemotePaginationTagLib {
         }
     }
 
-    private def wrapInListItem(Boolean bootstrapEnabled, def val) {
+    private wrapInListItem(Boolean bootstrapEnabled, val) {
         bootstrapEnabled ? "<li>$val</li>" : val
+    }
+
+    private void assertNotNullAttribute(Map attrs, String name, String tagName) {
+        if (attrs[name] == null) {
+            throwTagError("Tag [$tagName] is missing required attribute [$name]")
+        }
+    }
+
+    private void assertAttribute(Map attrs, String name, String tagName) {
+        if (!attrs[name]) {
+            throwTagError("Tag [$tagName] is missing required attribute [$name]")
+        }
+    }
+
+    private Locale getLocale() {
+        RCU.getLocale request
+    }
+
+    private getConfig() {
+        grailsApplication.config.grails.plugins.remotepagination
     }
 }

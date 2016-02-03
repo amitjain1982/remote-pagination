@@ -8,11 +8,9 @@
 */target-eclipse/*
 .settings/*
 .settings
-*/*.zip
-*/*.sha1
-stacktrace.log
-target/
+*.log
 **/*.html
 build
 .gradle
 gradle
+.DS_Store

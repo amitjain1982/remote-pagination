@@ -117,6 +117,14 @@ class RemotePaginationTagLib {
             })
         }
 
+        Integer showMax
+        Integer showMin = offset + 1
+        if(currentstep == laststep){
+            showMax = total
+        } else {
+            showMax = offset + max
+        }
+
         if ((alwaysShowPageSizes || total > max) && pageSizes) {
             selectParams.remove("max")
             selectParams.offset = 0
@@ -132,6 +140,7 @@ class RemotePaginationTagLib {
         if (bootstrapEnabled) {
             writer << '</ul>'
         }
+        writer << "<span>Showing ${showMin} to ${showMax} of ${total} entries</span>"
     }
 
     /**

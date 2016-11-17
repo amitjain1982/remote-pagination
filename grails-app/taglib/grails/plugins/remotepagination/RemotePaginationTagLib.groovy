@@ -48,14 +48,16 @@ class RemotePaginationTagLib {
 
         // determine paging variables
         boolean steps = maxsteps > 0
-        Integer currentstep = (offset / max) + 1
+        Integer offsetRest = offset % max
+        boolean hasOffset = offsetRest > 0
+        Integer currentstep = Math.ceil(offset / max) + 1
         Integer firststep = 1
-        Integer laststep = Math.round(Math.ceil(total / max))
+        Integer laststep = Math.round(Math.ceil(total / max)) + (hasOffset ? 1 : 0)
 
         // display previous link when not on firststep
         if (currentstep > firststep) {
             linkTagAttrs.class = 'prevLink'
-            linkParams.offset = offset - max
+            linkParams.offset = Math.max(0, offset - max)
             writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) {
                 (attrs.prev ? attrs.prev : messageSource.getMessage('paginate.prev', null, messageSource.getMessage('default.paginate.prev', null, 'Previous', locale), locale))
             })
@@ -96,7 +98,7 @@ class RemotePaginationTagLib {
                     String currentStepClass = bootstrapEnabled ? "active" : "currentStep"
                     writer << wrapInListItem(bootstrapEnabled, """<span class="$currentStepClass">$i</span>""")
                 } else {
-                    linkParams.offset = (i - 1) * max
+                    linkParams.offset = computeOffset(offset, max, currentstep, i)
                     writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) { i.toString() })
                 }
             }
@@ -104,7 +106,7 @@ class RemotePaginationTagLib {
             // display laststep link when endstep is not laststep
             if (endstep < laststep) {
                 writer << wrapInListItem(bootstrapEnabled, '<span class="step">..</span>')
-                linkParams.offset = (laststep - 1) * max
+                linkParams.offset = computeOffset(offset, max, currentstep, laststep)
                 writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) { laststep.toString() })
             }
         }
@@ -132,6 +134,10 @@ class RemotePaginationTagLib {
         if (bootstrapEnabled) {
             writer << '</ul>'
         }
+    }
+
+    private static int computeOffset(int offset, int max, int currentStep, int step) {
+        return (step == 1 ? 0 : offset) + (Math.max(0, step - currentStep - 1)) * max
     }
 
     /**

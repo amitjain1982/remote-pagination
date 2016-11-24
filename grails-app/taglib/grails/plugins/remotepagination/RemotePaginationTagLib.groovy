@@ -52,15 +52,17 @@ class RemotePaginationTagLib {
 
         // determine paging variables
         boolean steps = maxsteps > 0
-        Integer currentstep = (offset / max) + 1
+        Integer offsetRest = offset % max
+        boolean hasOffset = offsetRest > 0
+        Integer currentstep = Math.ceil(offset / max) + 1
         Integer firststep = 1
-        Integer laststep = Math.round(Math.ceil(total / max))
+        Integer laststep = Math.round(Math.ceil(total / max)) + (hasOffset ? 1 : 0)
 
         // display previous link when not on firststep
         if (currentstep > firststep) {
             linkTagAttrs.class = 'prevLink'
-            linkParams.offset = offset - max
-            writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) {
+            linkParams.offset = Math.max(0, offset - max)
+            writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) {
                 (attrs.prev ? attrs.prev : messageSource.getMessage('paginate.prev', null, messageSource.getMessage('default.paginate.prev', null, 'Previous', locale), locale))
             })
         }
@@ -88,35 +90,35 @@ class RemotePaginationTagLib {
             // display firststep link when beginstep is not firststep
             if (beginstep > firststep) {
                 linkParams.offset = 0
-                writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) {
+                writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) {
                     firststep.toString()
                 })
-                writer << wrapInListItem(bootstrapEnabled,'<span class="step">..</span>')
+                writer << wrapInListItem(bootstrapEnabled, '<span class="step">..</span>')
             }
 
             // display paginate steps
-            (beginstep..endstep).each {i ->
+            (beginstep..endstep).each { i ->
                 if (currentstep == i) {
                     String currentStepClass = bootstrapEnabled ? "active" : "currentStep"
-                    writer << wrapInListItem(bootstrapEnabled,"<span class=\"${currentStepClass}\">${i}</span>")
+                    writer << wrapInListItem(bootstrapEnabled, """<span class="$currentStepClass">$i</span>""")
                 } else {
-                    linkParams.offset = (i - 1) * max
-                    writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) {i.toString()})
+                    linkParams.offset = computeOffset(offset, max, currentstep, i)
+                    writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) { i.toString() })
                 }
             }
 
             // display laststep link when endstep is not laststep
             if (endstep < laststep) {
-                writer << wrapInListItem(bootstrapEnabled,'<span class="step">..</span>')
-                linkParams.offset = (laststep - 1) * max
-                writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) { laststep.toString() })
+                writer << wrapInListItem(bootstrapEnabled, '<span class="step">..</span>')
+                linkParams.offset = computeOffset(offset, max, currentstep, laststep)
+                writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) { laststep.toString() })
             }
         }
         // display next link when not on laststep
         if (currentstep < laststep) {
             linkTagAttrs.class = 'nextLink'
             linkParams.offset = offset + max
-            writer << wrapInListItem(bootstrapEnabled,remoteLink(linkTagAttrs.clone()) {
+            writer << wrapInListItem(bootstrapEnabled, remoteLink(linkTagAttrs.clone()) {
                 (attrs.next ? attrs.next : messageSource.getMessage('paginate.next', null, messageSource.getMessage('default.paginate.next', null, 'Next', locale), locale))
             })
         }

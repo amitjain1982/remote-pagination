@@ -137,7 +137,7 @@ class RemotePaginationTagLib {
     }
 
     private static int computeOffset(int offset, int max, int currentStep, int step) {
-        return (step == 1 ? 0 : offset) + (Math.max(0, step - currentStep - 1)) * max
+        return (step == 1 ? 0 : offset) + (Math.max(0, step - currentStep)) * max
     }
 
     /**

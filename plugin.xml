@@ -1,4 +1,4 @@
-<plugin name='remote-pagination' version='0.4.8' grailsVersion='2.0.3 &gt; *'>
+<plugin name='remote-pagination' version='0.4.9' grailsVersion='2.0.3 &gt; *'>
   <author>Amit Jain</author>
   <authorEmail>amitjain1982@gmail.com</authorEmail>
   <title>Remote Pagination Plugin</title>

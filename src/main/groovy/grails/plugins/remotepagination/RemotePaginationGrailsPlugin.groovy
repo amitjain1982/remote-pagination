@@ -1,7 +1,9 @@
+package grails.plugins.remotepagination
+
 import grails.plugins.Plugin
 
 class RemotePaginationGrailsPlugin extends Plugin {
-    def grailsVersion = "3.0.2 > *"
+    def grailsVersion = "4.0.0 > *"
     def author = "Amit Jain"
     def authorEmail = "amitjain1982@gmail.com"
     def title = "Remote Pagination Plugin"
